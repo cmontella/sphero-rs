@@ -85,6 +85,7 @@ use std::cell::RefCell;
 
 pub enum SpheroMessage {
   Send((DeviceId,u8)),
+  SendFull((DeviceId,u8,u8,Vec<u8>,u8)),
   Disconnect,
 }
 
@@ -94,6 +95,7 @@ pub struct Sphero {
   pub sender: Sender<SpheroMessage>,
   pub characteristic: Characteristic,
   pub power: power::Power,
+  pub driving: driving::Driving,
 }
 
 impl Sphero {
@@ -139,6 +141,19 @@ impl Sphero {
                           WriteType::WithoutResponse
                         ).unwrap();
                       }
+                      SpheroMessage::SendFull((device_id,cmd,target_id,data,flags)) => {
+                        let mut packet = Packet::new(device_id, cmd, Some(flags));
+                        packet.data = data;
+                        packet.set_target_id(target_id);
+                        println!("Sending Full {:?}", packet.build());
+                        sphero_bt.write(
+                          &characteristic,
+                          &packet.build(),
+                          WriteType::WithResponse
+                        ).unwrap();
+                        let response = sphero_bt.read(&characteristic);
+                        println!("{:?}", response);
+                      }
                       SpheroMessage::Disconnect => {
                         println!("Disconnect");
                         sphero_bt.disconnect();
@@ -153,6 +168,7 @@ impl Sphero {
                 kind: ToyKind::Unknown,
                 characteristic: c,
                 power: power::Power{sender: sender.clone()},
+                driving: driving::Driving{sender: sender.clone()},
                 sender: sender,
               };
               return Ok(sphero);
