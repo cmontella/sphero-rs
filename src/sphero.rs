@@ -169,47 +169,4 @@ impl Sphero {
     self.sender.send(SpheroMessage::Disconnect);
   }      
 
-
 }
-
-/*
-def request(self, command_id: Enum, timeout: float = 10, raise_api_error: bool = True, **kwargs) -> Packet:
-return self.ble_adapter.write(
-    self.packet(command_id=command_id.value, **kwargs),
-    raise_api_error=raise_api_error,
-    timeout=timeout,
-)*/
-
-
-
-/*
-import random
-from time import sleep
-
-from pysphero.core import Sphero
-from pysphero.driving import Direction
-
-
-def main():
-    mac_address = "aa:bb:cc:dd:ee:ff"
-    with Sphero(mac_address=mac_address) as sphero:
-        sphero.power.wake()
-
-        for _ in range(5):
-            sleep(2)
-            speed = random.randint(50, 100)
-            heading = random.randint(0, 360)
-            print(f"Send drive with speed {speed} and heading {heading}")
-
-            sphero.driving.drive_with_heading(speed, heading, Direction.forward)
-
-        sphero.power.enter_soft_sleep()
-
-
-if __name__ == "__main__":
-    main()*/
-
-
-    /*
-
-    */
