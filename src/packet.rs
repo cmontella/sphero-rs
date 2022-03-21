@@ -14,12 +14,14 @@ static escape_mask: u8 = 0x88;
 static escaped_bytes: (u8,u8,u8) = (start & !escape_mask, end & !escape_mask, escape & !escape_mask);
 static bad_bytes: (u8,u8,u8) = (start, end, escape);
 
-static response: u8 = 0x1;
-static requests_response: u8 = 0x2;
-static requests_only_error_response: u8 = 0x4;
-static resets_inactivity_timeout: u8 = 0x8;
-static command_has_target_id: u8 = 0x10;
-static command_has_source_id: u8 = 0x20;
+pub enum Flag {
+  RequestsResponse = 0x2,
+  RequestsOnlyErrorResponse = 0x4,
+  ResetsInactivityTimeout = 0x8,
+  CommandHasTargetId = 0x10,
+  CommandHasSourceId = 0x20,
+  Response = 0x1,
+}
 
 /*"""
 Packet structure:
@@ -53,7 +55,7 @@ impl Packet {
   pub fn new(device_id: DeviceId, command_id: u8, flags: Option<u8>) -> Packet {
     let mut pflags: u8 = 0;
     if flags == None {
-      pflags = requests_response | resets_inactivity_timeout;
+      pflags = Flag::RequestsResponse as u8 | Flag::ResetsInactivityTimeout as u8;
     }
 
     let psequence = Packet::generate_sequence();
@@ -70,12 +72,12 @@ impl Packet {
   }
 
   pub fn set_source_id(&mut self, source_id: u8) {
-    self.flags = self.flags | command_has_source_id;
+    self.flags = self.flags | Flag::CommandHasSourceId as u8;
     self.source_id = Some(source_id);
   }
 
   pub fn set_target_id(&mut self, target_id: u8) {
-    self.flags = self.flags | command_has_target_id;
+    self.flags = self.flags | Flag::CommandHasTargetId as u8;
     self.target_id = Some(target_id);
   }
 
