@@ -1,0 +1,11 @@
+[package]
+name = "sphero-rs"
+author = "Corey Montella"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+btleplug = "0.7.3"
+rand = "*"
+uuid = "*"
+lazy_static = "1.4.0"
