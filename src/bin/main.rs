@@ -1,27 +1,19 @@
-use sphero_rs::*;
+use sphero_rs::sphero::*;
+use std::thread;
+use std::time::Duration;
 
-// adapter retreival works differently depending on your platform right now.
-// API needs to be aligned.
 
 pub fn main() {
 
-    connect();
+  let mut sphero = Sphero::new().unwrap();
 
 
+  sphero.power.wake();
+  thread::sleep(Duration::from_secs(5));
+  sphero.power.enter_soft_sleep();
+  sphero.disconnect();
+  loop{}
 
-
-/*
-    // find the characteristic we want
-    let chars = light.characteristics();
-    let cmd_char = chars.iter().find(|c| c.uuid == LIGHT_CHARACTERISTIC_UUID).unwrap();
-
-    // dance party
-    let mut rng = thread_rng();
-    for _ in 0..20 {
-        let color_cmd = vec![0x56, rng.gen(), rng.gen(), rng.gen(), 0x00, 0xF0, 0xAA];
-        light.write(&cmd_char, &color_cmd, WriteType::WithoutResponse).unwrap();
-        thread::sleep(Duration::from_millis(200));
-    }*/
 }
 
 // SB-C714

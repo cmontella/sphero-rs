@@ -1,5 +1,7 @@
 use crate::packet::*;
 use crate::*;
+use crate::sphero::*;
+use std::sync::mpsc::Sender;
 
 pub enum BatteryVoltageStates {
   Ok = 0x01,
@@ -22,7 +24,6 @@ pub enum ChargerStates {
   Charged = 0x03,
 }
 
-
 pub enum PowerCommand {
   EnterDeepSleep = 0x00,
   EnterSoftSleep = 0x01,
@@ -41,16 +42,16 @@ pub enum PowerCommand {
   BatteryStateChanged = 0x1f,
 }
 
-struct Power {}
+pub struct Power {pub sender: Sender<SpheroMessage>}
 
 impl Power {
 
   pub fn enter_deep_sleep(&self) {
-    let packet = Packet::new(DeviceId::Power, PowerCommand::EnterDeepSleep as u8, None);
+    self.sender.send(SpheroMessage::Send((DeviceId::Power,PowerCommand::EnterDeepSleep as u8)));
   }
 
   pub fn enter_soft_sleep(&self) {
-    let packet = Packet::new(DeviceId::Power, PowerCommand::EnterSoftSleep as u8, None);
+    self.sender.send(SpheroMessage::Send((DeviceId::Power,PowerCommand::EnterSoftSleep as u8)));
   }
 
     /*
@@ -66,7 +67,7 @@ impl Power {
         return int.from_bytes(response.data, "big") / 100
 */
   pub fn wake(&self) {
-    let packet = Packet::new(DeviceId::Power, PowerCommand::Wake as u8, None);
+    self.sender.send(SpheroMessage::Send((DeviceId::Power,PowerCommand::Wake as u8)));
   }
         /*
     def get_battery_state_LMQ(self) -> BatteryLMQStates:
