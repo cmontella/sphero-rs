@@ -1,7 +1,7 @@
 # sphero-rs
 
 
-Based on: https://github.com/EnotYoyo/pysphero
+Based on: https://github.com/EnotYoyo/pysphero. Almost a straight port, but some improvements I think taking advantage of Rust's capabilities. Very grateful they put this together, here's how their work is licensed:
 
 The MIT License
 
