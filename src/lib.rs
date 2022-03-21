@@ -20,11 +20,13 @@ pub mod constants;
 pub mod sphero;
 pub mod packet;
 pub mod power;
+pub mod driving;
 
 pub use self::constants::*;
 pub use self::sphero::*;
 pub use self::packet::*;
 pub use self::power::*;
+pub use self::driving::*;
 
 
 
