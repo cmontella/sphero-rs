@@ -12,22 +12,23 @@ lazy_static! {
   pub static ref SpheroCharacteristicApiV2: Uuid = Uuid::parse_str("00010002-574f-4f20-5370-6865726f2121").unwrap();
 }
 
+#[derive(PartialEq,Eq,Debug,Copy,Clone)]
 pub enum  Api2Error {
-  success = 0x00,
-  bad_device_id = 0x01,
-  bad_command_id = 0x02,
-  not_yet_implemented = 0x03,
-  command_is_restricted = 0x04,
-  bad_data_length = 0x05,
-  command_failed = 0x06,
-  bad_parameter_value = 0x07,
-  busy = 0x08,
-  bad_target_id = 0x09,
-  target_unavailable = 0x0a,
-  unknown = 0xff,
+  Success = 0x00,
+  BadDeviceId = 0x01,
+  BadCommandId = 0x02,
+  NotYetImplemented = 0x03,
+  CommandIsRestricted = 0x04,
+  BadDataLength = 0x05,
+  CommandFailed = 0x06,
+  BadParameterValue = 0x07,
+  Busy = 0x08,
+  BadTargetId = 0x09,
+  TargetUnavilable = 0x0a,
+  Unknown = 0xff,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum DeviceId {
   ApiProcessor = 0x10,
   SystemInfo = 0x11,
@@ -44,6 +45,7 @@ pub enum DeviceId {
   FactoryTest = 0x1f,
   MacroSystem = 0x20,
   Proto = 0xfe,
+  Test = 0x23,
 }
 
 pub enum ToyKind {
