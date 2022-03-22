@@ -10,7 +10,7 @@ use std::time::Duration;
 // F3:4F:CD:46:C7:14
 pub fn main() {
 
-  let mut sphero = Sphero::new().unwrap();
+  let mut sphero = Sphero::new("SB-C714").unwrap();
 
   sphero.power.wake();
   let speed: u8 = 50;

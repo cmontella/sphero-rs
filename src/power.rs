@@ -42,6 +42,7 @@ pub enum PowerCommand {
   BatteryStateChanged = 0x1f,
 }
 
+#[derive(Debug)]
 pub struct Power {pub sender: Sender<SpheroMessage>}
 
 impl Power {

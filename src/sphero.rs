@@ -89,6 +89,7 @@ pub enum SpheroMessage {
   Disconnect,
 }
 
+#[derive(Debug)]
 pub struct Sphero {
   pub mac_address: String,
   pub kind: ToyKind,
@@ -100,7 +101,7 @@ pub struct Sphero {
 
 impl Sphero {
 
-  pub fn new() -> Result<Sphero,i32> {
+  pub fn new(name: &str) -> Result<Sphero,i32> {
 
     let manager = Manager::new().unwrap();
       // get the first bluetooth adapter
@@ -112,7 +113,7 @@ impl Sphero {
       // find the device we're interested in
       match central.peripherals().into_iter()
           .find(|p| p.properties().local_name.iter()
-              .any(|name| name.contains("SB-"))) {
+              .any(|pname| *pname == name)) {
         Some(sphero_bt) => {
           println!("{:?}", sphero_bt);
           print!("Connecting to Sphero...");
@@ -135,7 +136,6 @@ impl Sphero {
                     match msg {
                       SpheroMessage::Send((device_id,cmd)) => {
                         let mut packet = Packet::new(device_id, cmd, None);
-                        println!("Sending {:?}", packet.build());
                         sphero_bt.write(
                           &characteristic,
                           &packet.build(),
@@ -146,14 +146,13 @@ impl Sphero {
                         let mut packet = Packet::new(device_id, cmd, Some(flags));
                         packet.data = data;
                         packet.set_target_id(target_id);
-                        println!("Sending Full {:?}", packet.build());
                         sphero_bt.write(
                           &characteristic,
                           &packet.build(),
                           WriteType::WithResponse
                         ).unwrap();
                         let response = sphero_bt.read(&characteristic);
-                        println!("{:?}", response);
+                        //println!("{:?}", response);
                       }
                       SpheroMessage::Disconnect => {
                         println!("Disconnect");

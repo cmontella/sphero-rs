@@ -48,6 +48,7 @@ pub enum DeviceId {
   Test = 0x23,
 }
 
+#[derive(Debug)]
 pub enum ToyKind {
   Unknown,
   Ollie,

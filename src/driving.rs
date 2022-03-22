@@ -44,6 +44,7 @@ pub enum DrivingCommand {
   SetStabilization = 0x0c,
 }
 
+#[derive(Debug)]
 pub struct Driving{pub sender: Sender<SpheroMessage>}
 
 impl Driving {
