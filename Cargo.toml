@@ -1,8 +1,14 @@
 [package]
 name = "sphero-rs"
-author = "Corey Montella"
+authors = ["Corey Montella <corey@mech-lang.org>"]
 version = "0.1.0"
+license = "Apache-2.0"
+repository = "https://github.com/cmontella/sphero-rs"
+readme = "README.md"
 edition = "2021"
+
+[badges]
+github = { repository = "cmontella/sphero-rs", branch = "main" }
 
 [dependencies]
 btleplug = "0.7.3"
