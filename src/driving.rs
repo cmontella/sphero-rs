@@ -22,12 +22,12 @@ pub enum DirectionRawMotor {
 }
 
 pub enum StabilizationIndex {
-  no_control_system = 0x00,
-  full_control_system = 0x01,
-  pitch_control_system = 0x02,
-  roll_control_system = 0x03,
-  yaw_control_system = 0x04,
-  speed_and_yaw_control_system = 0x05,
+  NoControlSystem = 0x00,
+  FullControlSystem = 0x01,
+  PitchControlSystem = 0x02,
+  RollControlSystem = 0x03,
+  YawControlSystem = 0x04,
+  SpeedAndYawControlSystem = 0x05,
 }
 
 pub enum DrivingCommand {
