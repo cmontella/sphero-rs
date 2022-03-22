@@ -1,5 +1,7 @@
 use sphero_rs::sphero::*;
 use sphero_rs::driving::*;
+use sphero_rs::packet::*;
+use sphero_rs::constants::*;
 use std::thread;
 use std::time::Duration;
 
@@ -10,11 +12,16 @@ pub fn main() {
 
   sphero.power.wake();
   thread::sleep(Duration::from_secs(1));
-  sphero.driving.drive_with_heading(0xFF,0x0000,Direction::Forward);
-  thread::sleep(Duration::from_secs(4));
+  sphero.driving.drive_with_heading(0xAA,0x0000,Direction::Forward);
+  thread::sleep(Duration::from_secs(1));
+  sphero.driving.drive_with_heading(0xAA,0x0000,Direction::Reverse);
+  thread::sleep(Duration::from_secs(1));
+  sphero.driving.drive_with_heading(0x00,0x0000,Direction::Forward);
   sphero.power.enter_soft_sleep();
   sphero.disconnect();
   loop{}
+
+
 
 }
 
