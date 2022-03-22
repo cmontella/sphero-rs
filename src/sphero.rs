@@ -127,6 +127,7 @@ impl Sphero {
               let characteristic = characteristics.iter().find(|c| c.uuid == *SpheroCharacteristicApiV2).unwrap().clone();
               let c = characteristic.clone();
               let (sender, bt_receiver) = channel();
+
               //let (bt_sender, receiver) = channel();
               thread::spawn(move || {
                 'receive: loop {
@@ -163,6 +164,7 @@ impl Sphero {
                   }
                 }
               });
+
               let sphero = Sphero {
                 mac_address: "".to_string(),
                 kind: ToyKind::Unknown,

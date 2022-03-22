@@ -1,3 +1,4 @@
+#![allow(warnings)]
 use std::thread;
 use std::time::Duration;
 use rand::{Rng, thread_rng};
