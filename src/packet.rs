@@ -39,8 +39,9 @@ Packet structure:
 Usually the first data byte is the api_v2 response code
 """*/
 
-#[derive(Debug)   ]
+#[derive(Debug)]
 pub struct Packet {
+  pub id: (DeviceId,u8),
   pub device_id: DeviceId,
   pub command_id: u8,
   pub flags: u8,
@@ -48,36 +49,44 @@ pub struct Packet {
   pub source_id: Option<u8>,
   pub sequence: u8,
   pub data: Vec<u8>,
+  pub error: Option<Api2Error>,
 }
 
 impl Packet {
 
   pub fn new(device_id: DeviceId, command_id: u8, flags: Option<u8>) -> Packet {
     let mut pflags: u8 = 0;
-    if flags == None {
-      pflags = Flag::RequestsResponse as u8 | Flag::ResetsInactivityTimeout as u8;
-    }
+    let flags = match flags {
+      Some(flags) => flags,
+      None => Flag::RequestsResponse as u8 | Flag::ResetsInactivityTimeout as u8
+    };
 
     let psequence = Packet::generate_sequence();
 
     Packet {
+      id: (device_id,command_id),
       device_id,
       command_id,
-      flags: pflags,
+      flags,
       target_id: None,
       source_id: None,
       sequence: psequence,
       data: Vec::new(),
+      error: None,
     }
   }
 
   pub fn set_source_id(&mut self, source_id: u8) {
-    self.flags = self.flags | Flag::CommandHasSourceId as u8;
+    if self.flags == (Flag::RequestsResponse as u8 | Flag::ResetsInactivityTimeout as u8) {
+      self.flags = self.flags | Flag::CommandHasSourceId as u8;
+    }
     self.source_id = Some(source_id);
   }
 
   pub fn set_target_id(&mut self, target_id: u8) {
-    self.flags = self.flags | Flag::CommandHasTargetId as u8;
+    if self.flags == (Flag::RequestsResponse as u8 | Flag::ResetsInactivityTimeout as u8) {
+      self.flags = self.flags | Flag::CommandHasTargetId as u8;
+    }
     self.target_id = Some(target_id);
   }
 
@@ -87,12 +96,39 @@ impl Packet {
     *seq
   }
 
+  pub fn api_error(&mut self) -> Api2Error {
+    match &self.error {
+      None => {
+        if (self.flags & Flag::Response as u8) > 0 && self.data.len() > 0 {
+          let code = self.data.remove(0);
+          let error = match code {
+            0x00 => Api2Error::Success,
+            0x01 => Api2Error::BadDeviceId,
+            0x02 => Api2Error::BadCommandId,
+            0x03 => Api2Error::NotYetImplemented,
+            0x04 => Api2Error::CommandIsRestricted,
+            0x05 => Api2Error::BadDataLength,
+            0x06 => Api2Error::CommandFailed,
+            0x07 => Api2Error::BadParameterValue,
+            0x08 => Api2Error::Busy,
+            0x09 => Api2Error::BadTargetId,
+            0x0a => Api2Error::TargetUnavilable,
+            _ => Api2Error::Unknown,
+          };
+          self.error = Some(error);
+          return error;
+        }
+        self.error = Some(Api2Error::Success);
+        return Api2Error::Success;
+      }
+      Some(error) => *error,
+    }
+  }
+
+
   /*
       @cached_property
-    def api_error(self) -> Api2Error:
-        if self.flags & Flag.response.value and len(self.data) > 0:
-            return Api2Error(self.data.pop(0))  # delete first byte from data
-        return Api2Error.success
+
         */
 
 /*
@@ -173,12 +209,13 @@ impl Packet {
     head.push(self.device_id as u8);
     head.push(self.command_id);
     head.push(self.sequence);
-    head.append(&mut self.data);
+    let mut data = self.data.clone();
+    head.append(&mut data);
     head
   }
 
   pub fn checksum(&mut self) -> u8 {
-    0xFF - (self.packet_payload().iter().sum::<u8>() & 0xFF)
+    0xFF - self.packet_payload().iter().sum::<u8>() & 0xFF
   }
 
   pub fn build(&mut self) -> Vec<u8> {
@@ -198,6 +235,11 @@ impl Packet {
     packet.append(&mut escaped_full_packet);
     packet.push(end);
     packet
+  }
+
+  pub fn print_hex(&mut self) {
+    self.build().iter().for_each(|b| print!("{:x} ",b));
+    println!("");
   }
 
 }
