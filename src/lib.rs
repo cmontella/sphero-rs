@@ -22,12 +22,14 @@ pub mod sphero;
 pub mod packet;
 pub mod power;
 pub mod driving;
+pub mod user_io;
 
 pub use self::constants::*;
 pub use self::sphero::*;
 pub use self::packet::*;
 pub use self::power::*;
 pub use self::driving::*;
+pub use self::user_io::*;
 
 
 

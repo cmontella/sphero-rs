@@ -97,6 +97,7 @@ pub struct Sphero {
   pub characteristic: Characteristic,
   pub power: power::Power,
   pub driving: driving::Driving,
+  pub user_io: user_io::UserIo,
 }
 
 impl Sphero {
@@ -143,7 +144,8 @@ impl Sphero {
                         ).unwrap();
                       }
                       SpheroMessage::SendFull((device_id,cmd,target_id,data,flags)) => {
-                        let mut packet = Packet::new(device_id, cmd, Some(flags));
+                        let flags = if flags == 0 { None } else {Some(flags)};
+                        let mut packet = Packet::new(device_id, cmd, flags);
                         packet.data = data;
                         packet.set_target_id(target_id);
                         sphero_bt.write(
@@ -170,6 +172,7 @@ impl Sphero {
                 characteristic: c,
                 power: power::Power{sender: sender.clone()},
                 driving: driving::Driving{sender: sender.clone()},
+                user_io: user_io::UserIo{sender: sender.clone()},
                 sender: sender,
               };
               return Ok(sphero);
